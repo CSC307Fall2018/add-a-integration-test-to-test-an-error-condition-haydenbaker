@@ -4,6 +4,7 @@ const truncate = require('../truncate');
 const { ToDo } = require('../../models');
 
 const rootPath = '/todos';
+const badPath = '/new_route';
 
 describe('/todos', () => {
 
@@ -33,6 +34,13 @@ describe('/todos', () => {
         });
       });
     });
+
+    it('should return a 404', () => {
+      return request(app)
+         .get(badPath)
+         .expect(404);
+    });
+
   });
 
   describe('POST /', () => {
@@ -48,4 +56,17 @@ describe('/todos', () => {
         });
     });
   });
+
+   describe('DELETE /', () => {
+      it('delete a todo', () => {
+         return ToDo.create({
+            subject: 'delete_test',
+         }).then((item) => {
+            return request(app).delete(rootPath + '/' + item.id).expect((response) => {
+               return expect(response.body.delete).toEqual(true);
+            });
+         });
+      });
+   });
+
 });
